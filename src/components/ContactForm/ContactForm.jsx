@@ -2,16 +2,27 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { nanoid } from "nanoid";
 import validationSchema from "../ValidationSchema/ValidationSchema";
 import styles from "./ContactForm.module.css";
+import { useDispatch } from "react-redux";
+import { addContact } from "../../redux/contactsSlice";
 
-export default function ContactForm({ onAdd }) {
+export default function ContactForm() {
+  const dispatch = useDispatch();
+
+  const handleSubmit = (formData, { resetForm }) => {
+    dispatch(
+      addContact({
+        id: nanoid(),
+        name: formData.name,
+        number: formData.number,
+      })
+    );
+    resetForm();
+  };
   return (
     <Formik
       initialValues={{ name: "", number: "" }}
       validationSchema={validationSchema}
-      onSubmit={(values, actions) => {
-        onAdd({ id: nanoid(), ...values });
-        actions.resetForm();
-      }}
+      onSubmit={handleSubmit}
     >
       <Form className={styles.form}>
         <label className={styles.label}>
